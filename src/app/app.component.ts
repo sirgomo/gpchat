@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { UrlSerializer } from '@angular/router';
 import { Observable } from 'rxjs';
 import { Message } from './models/message';
 import { GpService } from './services/gpservice';
@@ -21,13 +22,15 @@ export class AppComponent {
   constructor (private service: GpService) {}
 
   verschicken() {
-
     let mess: Message = {} as Message;
-    mess.content = this.data;
+
     mess.model = this.selectedModel;
     mess.temperature = 0.7;
-    mess.user = 'user';
+    mess.max_tokens = 2048;
+    mess.messages = [{role: 'user', content: this.data}];
     this.response$ = this.service.sendMessage(mess);
-
+  }
+  chatReset() {
+    this.service.resetChat();
   }
 }

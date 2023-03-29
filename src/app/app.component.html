@@ -1,13 +1,21 @@
 <div class="container">
-  <div>
-    <label for="model">Select Model</label>
-    <select [(ngModel)]="selectedModel" id="model">
-      <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
-    </select>
-  </div>
+  <div class="row">
+      <div>
+        <label for="model">Select Model</label>
+        <select [(ngModel)]="selectedModel" id="model">
+          <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
+        </select>
+      </div>
+      <div>
+        <button (click)="chatReset()" >Chat reset!</button>
+      </div>
+   </div>
   <textarea name="" id="" cols="30" rows="10" [(ngModel)]="data"></textarea>
-  <button (click)="verschicken()">Wyslij</button>
+  <div class="wyslij">
+    <button (click)="verschicken()">Wyslij</button>
+  </div>
+
   <div *ngFor="let items of response$ | async ; let i = index">
-  {{items}}
+  {{items.role}} : <pre>{{items.content}}</pre>
   </div>
 </div>

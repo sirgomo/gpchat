@@ -1,6 +1,6 @@
 export interface Message {
   model: string;
   temperature: number;
-  user: string;
-  content: string;
+  messages: {role: string,  content: string}[];
+  max_tokens: number;
 }
