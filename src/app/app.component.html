@@ -14,8 +14,12 @@
   <div class="wyslij">
     <button (click)="verschicken()">Wyslij</button>
   </div>
-
-  <div *ngFor="let items of response$ | async ; let i = index">
-  {{items.role}} : <pre>{{items.content}}</pre>
+  <div>
+    <div *ngFor="let items of response$ | async ; let i = index">
+      <div>
+        {{items.role}} :
+      </div>
+       <pre>{{items.content}}</pre>
+      </div>
   </div>
 </div>

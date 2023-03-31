@@ -11,12 +11,14 @@ import { Message } from "../models/message";
 export class GpService {
   API_MODELS = 'https://api.openai.com/v1/models';
   API_CHAT = 'https://api.openai.com/v1/chat/completions';
+  API_BILDER = 'https://api.openai.com/v1/images/generations';
   constructor(private http: HttpClient) {}
   currentGespraech$ = new Observable<any[]>();
   chat : {role: string, content: string}[] = [];
   getMoodel() {
     return this.http.get<GpModels[]>(this.API_MODELS).pipe(map((res) => {
       return Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai");
+    //  return Object(res).data;
     }))
   }
   sendMessage(inMessag: Message) {
@@ -41,5 +43,7 @@ export class GpService {
     this.chat.splice(0, this.chat.length);
   }
 
+  genImage() {
 
+  }
 }
