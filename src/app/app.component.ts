@@ -27,6 +27,7 @@ export class AppComponent {
     mess.model = this.selectedModel;
     mess.temperature = 0.7;
     mess.max_tokens = 2048;
+    mess.stream = true;
     mess.messages = [{role: 'user', content: this.data}];
     this.response$ = this.service.sendMessage(mess);
   }
