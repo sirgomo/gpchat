@@ -122,6 +122,7 @@ sendMessage(inMessag: Message) {
  }
   resetChat() {
     this.chat.splice(0, this.chat.length);
+    this.stream.next('');
   }
 
   genImage() {
