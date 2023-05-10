@@ -6,6 +6,7 @@ import { GpModels } from "../models/gpModel";
 import { Message } from "../models/message";
 import { ParsedEvent } from "@angular/compiler";
 import { createParser, ReconnectInterval } from "eventsource-parser";
+import { environment } from "src/environment/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -25,11 +26,10 @@ export class GpService {
   getMoodel() {
     return this.http.get<GpModels[]>(this.API_MODELS).pipe(map((res) => {
       return Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai");
-    //  return Object(res).data;
     }))
   }
 sendMessage(inMessag: Message) {
-    const mess = {inMessag };
+
 
     this.chat.push(inMessag.messages[0]);
     inMessag.messages = this.chat;
@@ -41,13 +41,12 @@ sendMessage(inMessag: Message) {
 
     if(tmp.length > 10)
     {
-    //  this.chat.push({role: 'assistent', content: tmp[0]});
+
     if(!this.isStreamDone && this.chat.length > 0 && this.chat[this.chat.length-1].role !== 'user')
       this.chat.splice(1, this.chat.length-1);
 
 
       this.chat.push({ role: 'assistant', content: tmp });
-    //return [...chat, {role: 'assistant', content: tmp}];
     }
     return this.chat;
   })));
@@ -58,7 +57,7 @@ sendMessage(inMessag: Message) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer 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`,
+      Authorization: `Bearer ${environment.api_key}`,
     },
     method: "POST",
     body: JSON.stringify(inMessag),
