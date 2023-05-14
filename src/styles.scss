@@ -1,1 +1,104 @@
-/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #8124d8;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  height: calc(100% - 50px - 2rem);
+
+  position: relative;
+
+}
+
+.gptres {
+  width: 100%;
+  min-height: 100%;
+  background-color: #d8c396;
+  overflow-y: auto;
+  margin: .5rem;
+  border-radius: 1rem;
+}
+
+.item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 0.5rem 0;
+
+}
+
+.role {
+  width: 10%;
+  padding-left: 0.5rem;
+}
+
+.cont {
+  width: 90%;
+  padding-left: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: calc(50px + .5rem);
+  background-color: #e0e0e0;
+  margin: .5rem;
+  border-radius: .5rem;
+  gap: .4rem;
+}
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.model {
+  display: flex;
+  align-items: center;
+  margin-left: 1rem;
+  gap: .4rem;
+
+}
+
+.chat {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  gap: .4rem;
+}
+
+textarea {
+  height: 30px;
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+button {
+  border-radius: 5px;
+  background-color: #8124d8;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease-in-out;
+  width: 6rem;
+  height: 30px;
+}
+button:hover {
+  background-color: #258a00;
+}
+
+

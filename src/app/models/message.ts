@@ -1,4 +1,4 @@
-export interface Message {
+export interface iMessage {
   model: string;
   temperature: number;
   messages: {role: string,  content: string}[];

@@ -1,4 +1,4 @@
-export interface Images {
+export interface iImages {
   prompt: string;
   n: number;
   size: '1024x1024';

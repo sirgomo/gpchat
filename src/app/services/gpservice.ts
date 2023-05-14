@@ -1,12 +1,10 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { RouterLink } from "@angular/router";
-import { BehaviorSubject, catchError, combineLatest, concatMap, count, EMPTY, map, merge, mergeMap, Observable, of, scan, shareReplay, startWith, switchMap, tap } from "rxjs";
-import { GpModels } from "../models/gpModel";
-import { Message } from "../models/message";
-import { ParsedEvent } from "@angular/compiler";
-import { createParser, ReconnectInterval } from "eventsource-parser";
+import { BehaviorSubject, catchError, combineLatest, concat, concatMap, count, EMPTY, map, merge, mergeMap, Observable, of, scan, startWith, switchMap } from "rxjs";
+import { iGpModels } from "../models/gpModel";
+import { iMessage } from "../models/message";
 import { environment } from "src/environment/environment";
+import { iMessageStatus } from "../models/messStatus";
 
 @Injectable({
   providedIn: 'root'
@@ -16,44 +14,60 @@ export class GpService {
   API_CHAT = 'https://api.openai.com/v1/chat/completions';
   API_BILDER = 'https://api.openai.com/v1/images/generations';
   constructor(private http: HttpClient) {}
-  currentGespraech$ = new Observable<any[]>();
+  currentGesprech$ = new Observable<iMessageStatus[]>();
   chat : {role: string, content: string}[] = [];
-  stream: BehaviorSubject<string> =  new BehaviorSubject<string>('');
+  stream: BehaviorSubject<iMessageStatus> =  new BehaviorSubject<iMessageStatus>({role: '', content: '', status: null});
   isStreamDone : boolean = false;
   streamObs$ = this.stream.asObservable();
 
 
+
   getMoodel() {
-    return this.http.get<GpModels[]>(this.API_MODELS).pipe(map((res) => {
+    return this.http.get<iGpModels[]>(this.API_MODELS).pipe(map((res) => {
       return Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai");
     }))
   }
-sendMessage(inMessag: Message) {
+sendMessage(inMessag: iMessage) {
 
 
     this.chat.push(inMessag.messages[0]);
     inMessag.messages = this.chat;
-    console.log(inMessag.messages);
+
 
 
    this.getStream(inMessag);
-    return combineLatest([of(this.chat), this.streamObs$]).pipe((map(([chat, tmp]) => {
-
-    if(tmp.length > 10)
-    {
-
-    if(!this.isStreamDone && this.chat.length > 0 && this.chat[this.chat.length-1].role !== 'user')
-      this.chat.splice(1, this.chat.length-1);
 
 
-      this.chat.push({ role: 'assistant', content: tmp });
-    }
-    return this.chat;
-  })));
+
+
+  return this.currentGesprech$ = combineLatest([of(this.chat), this.streamObs$]).pipe(
+
+    map(([chat, res]) => {
+      if(res.role === '') {
+        return chat.map((item) => {
+          return { ...item,
+           status: res.status
+          }
+         })
+
+      }
+
+      if(chat[chat.length-1].role === 'assistant'){
+        chat.splice(chat.length-1,1)
+      }
+        chat.push({role: res.role, content: res.content});
+
+      return chat.map((item) => {
+        return { ...item,
+         status: res.status
+        }
+       })
+    })
+  )
 
 
 }
- async getStream(inMessag: Message) {
+ async getStream(inMessag: iMessage) {
   const res = await fetch("https://api.openai.com/v1/chat/completions", {
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +79,7 @@ sendMessage(inMessag: Message) {
     let streamDone = false;
     this.isStreamDone = streamDone;
     let reader = res.body?.getReader();
-    let current = '';
+    let current: iMessageStatus = {role:'assistant', content: '', status: null} ;
     const tmpstream = this.stream;
     const decoder = new TextDecoder();
     let coutn = 0 ;
@@ -89,27 +103,26 @@ sendMessage(inMessag: Message) {
               return;
             }
 
-            let tmpa = decoder.decode(value); //= decoder.decode(value);
+            let tmpa = decoder.decode(value);
 
             coutn++;
 
 
             const data = tmpa.split('data: ');
+
             for (let i = 0; i < data.length; i++) {
              try {
               const ob = Object(JSON.parse(data[i]));
-            if (ob.choices[0].delta.content) {
-              current += '' + ob.choices[0].delta.content;
-              tmpstream.next(current);
-            }
 
+                current.status = ob.choices[0].finish_reason;
+                if (ob.choices[0].delta.content) {
+                  current.content += ob.choices[0].delta.content;
+                  tmpstream.next(current);
+                }
              } catch (err) {
 
              }
             }
-
-
-
             push();
           }, (err) => {
            console.log(err);
@@ -118,12 +131,14 @@ sendMessage(inMessag: Message) {
         push();
       },
     })
+
  }
   resetChat() {
     this.chat.splice(0, this.chat.length);
-    this.stream.next('');
+    this.currentGesprech$ = new Observable<iMessageStatus[]>();
+    this.stream.next({role: '', content: '', status: null});
+    return this.currentGesprech$;
   }
-
   genImage() {
 
   }
