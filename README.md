@@ -1,5 +1,5 @@
- Der Chat wurde in Angular erstellt. Grundlegende Funktionen werden je nach Bedarf hinzugefügt.
+ The chat was created in Angular. Basic functionalities will be added as needed.
 
-- Echtzeit-Chat
-- Auswahl des GPT-Modells
-- Chat zurücksetzen
+- Real-time chat
+- Selection of the GPT model
+- Reset chat
