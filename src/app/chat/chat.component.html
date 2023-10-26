@@ -24,8 +24,8 @@
     <div class="chat">
       <textarea name="" id="" cols="130" rows="2" [(ngModel)]="data"></textarea>
       <div class="wyslij">
-        <button (click)="verschicken()" *ngIf="loged">Wyslij</button>
-        <button (click)="login()" *ngIf="!loged">Login</button>
+        <button (click)="verschicken()" *ngIf="loged()">Wyslij</button>
+        <button routerLink="login" *ngIf="!loged()">Login</button>
       </div>
     </div>
    </div>

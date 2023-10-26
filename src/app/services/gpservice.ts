@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, signal } from "@angular/core";
 import { BehaviorSubject, catchError, combineLatest, concat, concatMap, count, EMPTY, map, merge, mergeMap, Observable, of, scan, startWith, switchMap } from "rxjs";
 import { iGpModels } from "../models/gpModel";
 import { iMessage } from "../models/message";
@@ -20,17 +20,16 @@ export class GpService {
   isStreamDone : boolean = false;
   streamObs$ = this.stream.asObservable();
 
-  #loged = false;
+  #loged = signal(false);
 
   getMoodel() {
     return this.http.get<iGpModels[]>(this.API_MODELS).pipe(map((res) => {
-      console.log(res)
       const items: Array<any> =  Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai");
       return items;
     }))
   }
-  setLoged( log: string, pass: string) {
-
+  setLoged() {
+    this.#loged.set(true);
   }
   getlogeg() {
     return this.#loged;

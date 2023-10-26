@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { iMessageStatus } from '../models/messStatus';
 import { iMessage } from '../models/message';
@@ -10,7 +10,7 @@ import { GpService } from '../services/gpservice';
   styleUrls: ['./chat.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatComponent {
+export class ChatComponent implements OnDestroy {
   @ViewChild('stream', {static: true}) private streamElement: ElementRef<HTMLDivElement> | undefined
   title = 'gpchat';
   model$ = this.service.getMoodel();
@@ -20,6 +20,9 @@ export class ChatComponent {
   loged = this.service.getlogeg();
 
   constructor (private service: GpService) {}
+  ngOnDestroy(): void {
+    this.service.getlogeg().set(false);
+  }
 
   verschicken() {
     let mess: iMessage = {} as iMessage;
@@ -44,10 +47,5 @@ export class ChatComponent {
   chatReset() {
   this.response$ =  this.service.resetChat();
   }
-  login() {
-    const horizontal = 100;
-        const url = `${window.location.origin}/login/`;
-     window.open(url, "_blank", "resizable=no, toolbar=no, scrollbars=no, menubar=no, status=no, directories=no, location=no, width=1000, height=600, left=" + horizontal + " top=100 " );
 
-  }
 }
