@@ -20,12 +20,20 @@ export class GpService {
   isStreamDone : boolean = false;
   streamObs$ = this.stream.asObservable();
 
-
+  #loged = false;
 
   getMoodel() {
     return this.http.get<iGpModels[]>(this.API_MODELS).pipe(map((res) => {
-      return Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai");
+      console.log(res)
+      const items: Array<any> =  Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai");
+      return items;
     }))
+  }
+  setLoged( log: string, pass: string) {
+
+  }
+  getlogeg() {
+    return this.#loged;
   }
 sendMessage(inMessag: iMessage) {
 
@@ -142,5 +150,6 @@ sendMessage(inMessag: iMessage) {
   genImage() {
 
   }
+
 }
 

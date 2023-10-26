@@ -1,0 +1,32 @@
+<div class="container">
+  <div class="gptres"  id="stream" #stream>
+    <div *ngFor="let items of response$ | async ; let i = index" class="item"  >
+        <div class="role">
+          {{items.role}} :
+        </div>
+        <div>
+          <pre class="cont" > {{items.content}}</pre>
+        </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="model">
+        <div>
+          <label for="model">Select Model</label>
+          <select [(ngModel)]="selectedModel" id="model">
+            <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
+          </select>
+        </div>
+        <div>
+          <button (click)="chatReset()" >Chat reset!</button>
+        </div>
+    </div>
+    <div class="chat">
+      <textarea name="" id="" cols="130" rows="2" [(ngModel)]="data"></textarea>
+      <div class="wyslij">
+        <button (click)="verschicken()" *ngIf="loged">Wyslij</button>
+        <button (click)="login()" *ngIf="!loged">Login</button>
+      </div>
+    </div>
+   </div>
+</div>
