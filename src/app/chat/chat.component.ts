@@ -18,6 +18,7 @@ export class ChatComponent implements OnDestroy {
   data = '';
   selectedModel = '';
   loged = this.service.getlogeg();
+  system_role = '';
 
   constructor (private service: GpService) {}
   ngOnDestroy(): void {

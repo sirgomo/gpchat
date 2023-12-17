@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { Interceptor } from './interceptor';
 import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
-
+import {TextFieldModule} from '@angular/cdk/text-field';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,6 +21,7 @@ import { ChatComponent } from './chat/chat.component';
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
+    TextFieldModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true }],
   bootstrap: [AppComponent]

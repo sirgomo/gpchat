@@ -11,18 +11,21 @@
   </div>
   <div class="row">
     <div class="model">
-        <div>
+        <div class="model-select">
           <label for="model">Select Model</label>
           <select [(ngModel)]="selectedModel" id="model">
             <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
           </select>
+          <div>
+            <input type="text" [(ngModel)]="system_role">
+          </div>
         </div>
         <div>
           <button (click)="chatReset()" >Chat reset!</button>
         </div>
     </div>
     <div class="chat">
-      <textarea name="" id="" cols="130" rows="2" [(ngModel)]="data"></textarea>
+      <textarea name="" id="" cols="130"  [(ngModel)]="data"></textarea>
       <div class="wyslij">
         <button (click)="verschicken()" *ngIf="loged()">Wyslij</button>
         <button routerLink="login" *ngIf="!loged()">Login</button>

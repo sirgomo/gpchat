@@ -21,7 +21,7 @@ export class LoginComponent {
         const myPlaintextPassword = this.pass.trim()+environment.pay_key.trim();
         const hashe = await bcrypt.hash(myPlaintextPassword.trim(), 10);
 
-       await bcrypt.compare(myPlaintextPassword, environment.wlodek ).then((res) => {
+       await bcrypt.compare(myPlaintextPassword, environment.pass ).then((res) => {
 
         if(res) {
           this.ser.setLoged();
