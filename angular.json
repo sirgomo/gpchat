@@ -88,12 +88,12 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "gpchat:build:production",
-              "port": 1500
+              "port": 1500,
+              "buildTarget": "gpchat:build:production"
             },
             "development": {
-              "browserTarget": "gpchat:build:development",
-              "port": 1500
+              "port": 1500,
+              "buildTarget": "gpchat:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -101,7 +101,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "gpchat:build"
+            "buildTarget": "gpchat:build"
           }
         },
         "test": {

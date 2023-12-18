@@ -7,7 +7,7 @@ html, body {
 .container {
   display: flex;
   width: 100%;
-  height: calc(100% - 50px - 2rem);
+  height: calc(100% - 12.5%);
 
   position: relative;
 
@@ -51,7 +51,7 @@ html, body {
   bottom: 0;
   left: 0;
   right: 0;
-  height: calc(50px + .5rem);
+  height: 10%;
   background-color: #e0e0e0;
   margin: .5rem;
   border-radius: .5rem;
@@ -66,24 +66,27 @@ pre {
   align-items: center;
   margin-left: 1rem;
   gap: .4rem;
-
+  width: 20%;
+  .model-select {
+    display: flex;
+    flex-direction: column;
+   gap: .5rem;
+  }
 }
 
 .chat {
   display: flex;
-  align-items: center;
-  margin-right: 1rem;
+  align-items: flex-end;
+  margin-bottom: .5rem;
   gap: .4rem;
+
+  width: 80%;
+  mat-form-field {
+    width: 90%;
+  }
 }
 
-textarea {
-  height: 30px;
-  border-radius: 5px;
-  padding: 5px;
-  margin-right: 5px;
-  border: 1px solid #ccc;
-  width: 100%;
-}
+
 
 button {
   border-radius: 5px;

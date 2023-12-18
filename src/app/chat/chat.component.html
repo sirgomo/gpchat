@@ -1,11 +1,11 @@
 <div class="container">
   <div class="gptres"  id="stream" #stream>
     <div *ngFor="let items of response$ | async ; let i = index" class="item"  >
-        <div class="role">
+        <div class="role" *ngIf="items.role !== 'system'">
           {{items.role}} :
         </div>
         <div>
-          <pre class="cont" > {{items.content}}</pre>
+          <pre class="cont" *ngIf="items.role !== 'system'" > {{items.content}}</pre>
         </div>
     </div>
   </div>
@@ -17,7 +17,10 @@
             <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
           </select>
           <div>
-            <input type="text" [(ngModel)]="system_role">
+
+              <mat-label>System Role</mat-label>
+              <input type="text"[(ngModel)]="system_role">
+
           </div>
         </div>
         <div>
@@ -25,7 +28,13 @@
         </div>
     </div>
     <div class="chat">
-      <textarea name="" id="" cols="130"  [(ngModel)]="data"></textarea>
+      <mat-form-field>
+        <textarea matInput
+                  cdkTextareaAutosize
+                  #autosize="cdkTextareaAutosize"
+                  cdkAutosizeMinRows="4"
+                  cdkAutosizeMaxRows="4" [(ngModel)]="data"></textarea>
+      </mat-form-field>
       <div class="wyslij">
         <button (click)="verschicken()" *ngIf="loged()">Wyslij</button>
         <button routerLink="login" *ngIf="!loged()">Login</button>

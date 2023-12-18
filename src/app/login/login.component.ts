@@ -18,6 +18,9 @@ export class LoginComponent {
       if(!this.user || !this.pass)
         return;
 
+      if(this.user ===  environment.user || this.user === environment.user2 )
+    {
+
         const myPlaintextPassword = this.pass.trim()+environment.pay_key.trim();
         const hashe = await bcrypt.hash(myPlaintextPassword.trim(), 10);
 
@@ -30,6 +33,8 @@ export class LoginComponent {
 
        });
 
-
+      } else {
+        return;
+      }
   }
 }

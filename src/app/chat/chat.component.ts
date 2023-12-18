@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { ChangeDetectionStrategy, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { Observable, Subject, Subscription, take, tap } from 'rxjs';
 import { iMessageStatus } from '../models/messStatus';
 import { iMessage } from '../models/message';
 import { GpService } from '../services/gpservice';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 
 @Component({
   selector: 'app-chat',
@@ -12,6 +13,7 @@ import { GpService } from '../services/gpservice';
 })
 export class ChatComponent implements OnDestroy {
   @ViewChild('stream', {static: true}) private streamElement: ElementRef<HTMLDivElement> | undefined
+  @ViewChild('autosize') autosize!: CdkTextareaAutosize;
   title = 'gpchat';
   model$ = this.service.getMoodel();
   response$ = new Observable<iMessageStatus[]>();
@@ -19,20 +21,32 @@ export class ChatComponent implements OnDestroy {
   selectedModel = '';
   loged = this.service.getlogeg();
   system_role = '';
+  des$ = new Subscription();
 
-  constructor (private service: GpService) {}
+  constructor (private service: GpService, private _ngZone: NgZone) {}
   ngOnDestroy(): void {
     this.service.getlogeg().set(false);
+    this.des$.unsubscribe();
   }
 
   verschicken() {
     let mess: iMessage = {} as iMessage;
 
     mess.model = this.selectedModel;
-    mess.temperature = 0.7;
-    mess.max_tokens = 2048;
+    mess.temperature = 0.5;
+    mess.max_tokens = null;
     mess.stream = true;
-    mess.messages = [{role: 'user', content: this.data}];
+    if(this.system_role.length > 2) {
+      mess.messages = [
+        { role: 'system', content: this.system_role},
+        {role: 'user', content: this.data}
+      ];
+    } else {
+      mess.messages = [
+        {role: 'user', content: this.data}
+      ];
+    }
+
     this.response$ = this.service.sendMessage(mess).pipe(
       tap((res) => {
 
@@ -47,6 +61,9 @@ export class ChatComponent implements OnDestroy {
   }
   chatReset() {
   this.response$ =  this.service.resetChat();
+  this.system_role = '';
   }
-
+  triggerResize() {
+   this.des$ = this._ngZone.onStable.pipe(take(1)).subscribe(() => this.autosize.resizeToFitContent(true));
+  }
 }

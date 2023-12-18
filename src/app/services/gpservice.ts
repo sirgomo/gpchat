@@ -6,6 +6,7 @@ import { iMessage } from "../models/message";
 import { environment } from "src/environment/environment";
 import { iMessageStatus } from "../models/messStatus";
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,8 +25,8 @@ export class GpService {
 
   getMoodel() {
     return this.http.get<iGpModels[]>(this.API_MODELS).pipe(map((res) => {
-      console.log(res)
-      const items: Array<any> =  Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai" || ob.owned_by === "system");
+      //Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai" || ob.owned_by === "system");
+      const items: Array<any> =  Object(res).data.filter((ob: { id: string; }) => isFinite(Number(ob.id.split('-')[1])) && ob.id.split('-')[0] === 'gpt' );
       return items;
     }))
   }
@@ -38,7 +39,7 @@ export class GpService {
 sendMessage(inMessag: iMessage) {
 
 
-    this.chat.push(inMessag.messages[0]);
+    this.chat = [...this.chat, ...inMessag.messages];
     inMessag.messages = this.chat;
 
 
