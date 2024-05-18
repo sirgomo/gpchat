@@ -26,7 +26,7 @@ export class GpService {
   getMoodel() {
     return this.http.get<iGpModels[]>(this.API_MODELS).pipe(map((res) => {
       //Object(res).data.filter((ob: { owned_by: string; }) => ob.owned_by === "openai" || ob.owned_by === "system");
-      const items: Array<any> =  Object(res).data.filter((ob: { id: string; }) => isFinite(Number(ob.id.split('-')[1])) && ob.id.split('-')[0] === 'gpt' );
+      const items: Array<any> =  Object(res).data.filter((ob: { id: string; }) => ob.id.slice(0,5) == 'gpt-4' );
       return items;
     }))
   }
