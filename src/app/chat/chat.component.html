@@ -1,44 +1,144 @@
-<div class="container">
-  <div class="gptres"  id="stream" #stream>
-    <div *ngFor="let items of response$ | async ; let i = index" class="item"  >
-        <div class="role" *ngIf="items.role !== 'system'">
-          {{items.role}} :
-        </div>
-        <div>
-          <pre class="cont" *ngIf="items.role !== 'system'" > {{items.content}}</pre>
-        </div>
+<div class="chat-container" 
+     (dragover)="onDragOver($event)" 
+     (dragleave)="onDragLeave($event)" 
+     (drop)="onDrop($event)"
+     [class.dragging]="isDragging">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2>GPChat</h2>
+      <button class="btn-new" (click)="newChat()">+ New Chat</button>
     </div>
-  </div>
-  <div class="row">
-    <div class="model">
-        <div class="model-select">
-          <label for="model">Select Model</label>
-          <select [(ngModel)]="selectedModel" id="model">
-            <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
-          </select>
-          <div>
-
-              <mat-label>System Role</mat-label>
-              <input type="text"[(ngModel)]="system_role">
-
-          </div>
+    
+    <div class="conversations-list">
+      <div 
+        *ngFor="let conv of conversations$ | async" 
+        class="conversation-item"
+        [class.active]="currentConversation?.id === conv.id"
+        (click)="loadConversation(conv.id)"
+      >
+        <span class="conv-name">{{ conv.name }}</span>
+        <div class="conv-actions">
+          <button (click)="renameConversation(conv.id, $event)" title="Rename">✏️</button>
+          <button (click)="deleteConversation(conv.id, $event)" title="Delete">🗑️</button>
         </div>
-        <div>
-          <button (click)="chatReset()" >Chat reset!</button>
-        </div>
-    </div>
-    <div class="chat">
-      <mat-form-field>
-        <textarea matInput
-                  cdkTextareaAutosize
-                  #autosize="cdkTextareaAutosize"
-                  cdkAutosizeMinRows="4"
-                  cdkAutosizeMaxRows="4" [(ngModel)]="data"></textarea>
-      </mat-form-field>
-      <div class="wyslij">
-        <button (click)="verschicken()" *ngIf="loged()">Wyslij</button>
-        <button routerLink="login" *ngIf="!loged()">Login</button>
       </div>
     </div>
-   </div>
+    
+    <div class="sidebar-footer">
+      <label class="checkbox-label">
+        <input type="checkbox" [(ngModel)]="useMemory">
+        <span>Use Memory</span>
+      </label>
+      <button class="btn-danger" (click)="clearAllHistory()">Clear All</button>
+    </div>
+  </aside>
+  
+  <main class="chat-main">
+    <div class="chat-header">
+      <div class="header-left">
+        <label class="model-select">
+          <span>Model:</span>
+          <select [(ngModel)]="selectedModel">
+            <option *ngFor="let item of model$ | async" [ngValue]="item.id">{{item.id}}</option>
+          </select>
+        </label>
+        
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="useMemory">
+          <span>Memory</span>
+        </label>
+        
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="flexMode">
+          <span>Flex</span>
+        </label>
+      </div>
+      
+      <div class="header-right">
+        <button class="btn-secondary" (click)="toggleSystemPrompt()">System</button>
+        <button class="btn-secondary" (click)="chatReset()">Reset</button>
+      </div>
+    </div>
+    
+    <div class="messages-container" #stream>
+      <div *ngFor="let item of response$ | async" class="message" [class]="item.role">
+        <div class="message-role" *ngIf="item.role !== 'system'">
+          <span class="role-badge">{{ item.role }}</span>
+        </div>
+        
+        <div class="message-content">
+          <div *ngIf="getImageUrl(item)" class="message-images">
+            <img [src]="getImageUrl(item)" alt="Uploaded image" class="msg-image">
+          </div>
+          <pre class="content-text">{{ item.content }}</pre>
+        </div>
+      </div>
+      
+      <div *ngIf="(response$ | async)?.length === 0" class="empty-state">
+        <p>Start a new conversation</p>
+        <p class="hint">Drag & drop images here</p>
+      </div>
+    </div>
+    
+    <div class="input-area">
+      <div class="attachments" *ngIf="imageUrls.length > 0">
+        <div *ngFor="let url of imageUrls; let i = index" class="attachment-preview">
+          <img [src]="url" alt="Attachment">
+          <div class="attachment-actions">
+            <button class="send-btn" (click)="sendImageOnly(i)" title="Send only this image">📤</button>
+            <button class="remove-btn" (click)="removeImage(i)">×</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="input-row">
+        <div class="input-wrapper">
+          <textarea
+            cdkTextareaAutosize
+            #autosize="cdkTextareaAutosize"
+            cdkAutosizeMinRows="1"
+            cdkAutosizeMaxRows="6"
+            [(ngModel)]="data"
+            placeholder="Type your message..."
+            (keydown.enter)="onEnterKey($any($event))"
+          ></textarea>
+          
+          <div class="input-actions">
+            <label class="file-btn">
+              <input type="file" accept="image/*" multiple (change)="onFileSelected($event)">
+              <span>📎</span>
+            </label>
+            
+            <button class="btn-small" (click)="toggleSystemPrompt()">⚙️</button>
+          </div>
+        </div>
+        
+        <button class="btn-send" (click)="Verschicken()">
+          <span *ngIf="loged()">Send</span>
+          <span *ngIf="!loged()">Login</span>
+        </button>
+      </div>
+    </div>
+  </main>
+  
+  <div class="modal-overlay" *ngIf="showSystemPrompt" (click)="showSystemPrompt = false">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>System Prompt</h3>
+        <button class="close-btn" (click)="showSystemPrompt = false">×</button>
+      </div>
+      <div class="modal-body">
+        <textarea
+          [(ngModel)]="systemRole"
+          placeholder="Enter system prompt..."
+          rows="6"
+        ></textarea>
+        <p class="hint">This prompt will be saved with this conversation.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="showSystemPrompt = false">Cancel</button>
+        <button class="btn-primary" (click)="saveSystemPrompt()">Save</button>
+      </div>
+    </div>
+  </div>
 </div>

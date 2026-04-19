@@ -10,7 +10,11 @@ import { ChatComponent } from './chat/chat.component';
 import {TextFieldModule} from '@angular/cdk/text-field';
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { GpService } from './services/gpservice';
+import { HistoryService } from './services/history.service';
+import { QdrantService } from './services/qdrant.service';
 
 @NgModule({
   declarations: [
@@ -28,9 +32,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     TextFieldModule,
     MatFormFieldModule,
     MatInputModule,
+    MatButtonModule,
     BrowserAnimationsModule
   ],
-  providers: [{provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true },
+  providers: [
+    GpService,
+    HistoryService,
+    QdrantService,
+    {provide: HTTP_INTERCEPTORS, useClass: Interceptor, multi: true },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {
